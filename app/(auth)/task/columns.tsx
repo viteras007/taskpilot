@@ -12,6 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import Link from "next/link";
 
 export type Task = {
   id: string;
@@ -53,6 +54,11 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task = row.original;
 
+      const deleteTask = (taskId: string) => {
+        // TODO: Delete Task
+        console.log(taskId);
+      };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -72,9 +78,12 @@ export const columns: ColumnDef<Task>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <Pencil className="h-4 w-4 mr-4" />
-              Edit
+              <Link href={`/task/edit/${task.id}`}>Edit</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600 cursor-pointer">
+            <DropdownMenuItem
+              className="text-red-600 cursor-pointer"
+              onClick={() => deleteTask(task.id)}
+            >
               <Trash className="h-4 w-4 mr-4" />
               Delete
             </DropdownMenuItem>
