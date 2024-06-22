@@ -53,20 +53,20 @@ export default function NavMenu() {
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="#"
+              href="/dashboard"
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Package2 className="h-6 w-6" />
               <span className="sr-only">Acme Inc</span>
             </Link>
             <Link
-              href="#"
+              href="/dashboard"
               className="text-muted-foreground hover:text-foreground"
             >
               Dashboard
             </Link>
             <Link
-              href="#"
+              href="/task"
               className="text-muted-foreground hover:text-foreground"
             >
               Tasks

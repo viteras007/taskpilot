@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -65,7 +66,9 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Button variant="outline">Create New Task</Button>
+        <Link href="/task/new">
+          <Button variant="outline">Create New Task</Button>
+        </Link>
       </div>
       <div className="rounded-md border">
         <Table>
