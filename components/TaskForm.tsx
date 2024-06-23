@@ -24,6 +24,8 @@ import Link from "next/link";
 import { Task } from "@/app/(auth)/task/columns";
 import { createTask, updateTask } from "@/app/service/task.service";
 import { useRouter } from "next/navigation";
+import { ToastAction } from "./ui/toast";
+import { toast } from "./ui/use-toast";
 
 const formSchema = z.object({
   description: z.string().min(3),
@@ -55,16 +57,30 @@ export default function TaskForm({ type, task }: TaskFormProps) {
     if (type === "new") {
       try {
         await createTask(formData);
+        toast({
+          variant: "default",
+          title: "Task created with success!",
+        });
       } catch (e) {
-        // TODO: NOTIFICATION TOAST
-        console.log("error", e);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem to create task.",
+        });
       }
     } else if (type === "edit" && task) {
       try {
         await updateTask(formData, task.id);
+        toast({
+          variant: "default",
+          title: "Task updated with success!",
+        });
       } catch (e) {
-        // TODO: NOTIFICATION TOAST
-        console.log("error", e);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem to update task.",
+        });
       }
     }
     router.push("/task");

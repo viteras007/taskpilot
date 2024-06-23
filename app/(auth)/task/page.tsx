@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Task, columns } from "./columns";
 import { deleteTask, getAllTasks } from "@/app/service/task.service";
+import { toast } from "@/components/ui/use-toast";
 
 export default function TasksPage() {
   const [data, setData] = useState<Task[]>([]);
@@ -13,7 +14,11 @@ export default function TasksPage() {
         const tasks = await getAllTasks();
         setData(tasks);
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem to gel all tasks.",
+        });
       }
     };
 
@@ -24,9 +29,17 @@ export default function TasksPage() {
     try {
       await deleteTask(taskId);
       const tasks = await getAllTasks();
+      toast({
+        variant: "default",
+        title: "Task deleted with success!",
+      });
       setData(tasks);
     } catch (error) {
-      console.error("Failed to delete task:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem to delete the task.",
+      });
     }
   };
 
