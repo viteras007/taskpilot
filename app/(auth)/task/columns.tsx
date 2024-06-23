@@ -1,5 +1,5 @@
-"use client";
-
+// columns.tsx
+import { deleteTask } from "@/app/service/task.service";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,15 +17,19 @@ import Link from "next/link";
 export type Task = {
   id: string;
   description: string;
-  status: "done" | "open" | "close";
+  status: "DONE" | "OPEN" | "CLOSE";
   created_at: Date;
   updated_at: Date | null;
 };
 
-export const columns: ColumnDef<Task>[] = [
+interface ColumnsProps {
+  handleDelete: (taskId: string) => Promise<void>;
+}
+
+export const columns = ({ handleDelete }: ColumnsProps): ColumnDef<Task>[] => [
   {
     accessorKey: "description",
-    header: "description",
+    header: "Description",
   },
   {
     accessorKey: "status",
@@ -54,9 +58,8 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task = row.original;
 
-      const deleteTask = (taskId: string) => {
-        // TODO: Delete Task
-        console.log(taskId);
+      const onClickDelete = () => {
+        handleDelete(task.id);
       };
 
       return (
@@ -82,7 +85,7 @@ export const columns: ColumnDef<Task>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-600 cursor-pointer"
-              onClick={() => deleteTask(task.id)}
+              onClick={onClickDelete}
             >
               <Trash className="h-4 w-4 mr-4" />
               Delete

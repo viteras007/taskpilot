@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,32 +21,53 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { Task } from "@/app/(auth)/task/columns";
+import { createTask, updateTask } from "@/app/service/task.service";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   description: z.string().min(3),
 });
 
-type formType = z.infer<typeof formSchema>;
+export type FormType = z.infer<typeof formSchema>;
 
 export interface TaskFormProps {
   type: "new" | "edit";
+  task?: Task;
 }
 
-export default function TaskForm({ type }: TaskFormProps) {
-  const form = useForm<formType>({
+export default function TaskForm({ type, task }: TaskFormProps) {
+  const router = useRouter();
+  const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
     },
   });
 
-  const handleSubmit = () => {
-    // TODO: Create Task
+  useEffect(() => {
+    if (task) {
+      form.setValue("description", task.description);
+    }
+  }, []);
+
+  const handleSubmit = async (formData: FormType) => {
     if (type === "new") {
+      try {
+        await createTask(formData);
+      } catch (e) {
+        // TODO: NOTIFICATION TOAST
+        console.log("error", e);
+      }
+    } else if (type === "edit" && task) {
+      try {
+        await updateTask(formData, task.id);
+      } catch (e) {
+        // TODO: NOTIFICATION TOAST
+        console.log("error", e);
+      }
     }
-    // TODO: Update Task
-    else if (type === "edit") {
-    }
+    router.push("/task");
   };
 
   return (
@@ -81,7 +102,7 @@ export default function TaskForm({ type }: TaskFormProps) {
               />
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline">
+              <Button variant="outline" type="button">
                 <Link href="/task">Cancel</Link>
               </Button>
               <Button variant="default" type="submit">
