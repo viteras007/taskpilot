@@ -8,7 +8,11 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const tasks: Task[] = await prisma.task.findMany();
+      const tasks: Task[] = await prisma.task.findMany({
+        orderBy: {
+          created_at: "desc",
+        },
+      });
       res.status(200).json(tasks);
     } catch (error) {
       res.status(500).json({ error: "Error fetching tasks" });

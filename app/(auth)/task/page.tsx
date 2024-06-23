@@ -2,38 +2,42 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Task, columns } from "./columns";
-import { deleteTask, getAllTasks } from "@/app/service/task.service";
+import {
+  deleteTask,
+  getAllTasks,
+  updateTaskStatus,
+} from "@/app/service/task.service";
 import { toast } from "@/components/ui/use-toast";
+import { Status } from "@/app/model/taskStatus.model";
 
 export default function TasksPage() {
   const [data, setData] = useState<Task[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const tasks = await getAllTasks();
-        setData(tasks);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem to gel all tasks.",
-        });
-      }
-    };
+  const fetchAndSetTasks = async () => {
+    try {
+      const tasks = await getAllTasks();
+      setData(tasks);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem to get all tasks.",
+      });
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchAndSetTasks();
   }, []);
 
   const handleDelete = async (taskId: string) => {
     try {
       await deleteTask(taskId);
-      const tasks = await getAllTasks();
       toast({
         variant: "default",
         title: "Task deleted with success!",
       });
-      setData(tasks);
+      fetchAndSetTasks();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -43,9 +47,29 @@ export default function TasksPage() {
     }
   };
 
+  const handleUpdateStatus = async (taskId: string, status: Status) => {
+    try {
+      await updateTaskStatus(taskId, status);
+      toast({
+        variant: "default",
+        title: "Status updated with success!",
+      });
+      fetchAndSetTasks();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem to update the status.",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns({ handleDelete })} data={data} />
+      <DataTable
+        columns={columns({ handleDelete, handleUpdateStatus })}
+        data={data}
+      />
     </div>
   );
 }

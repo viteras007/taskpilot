@@ -1,4 +1,5 @@
 // columns.tsx
+import { Status } from "@/app/model/taskStatus.model";
 import { deleteTask } from "@/app/service/task.service";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
@@ -17,16 +25,20 @@ import Link from "next/link";
 export type Task = {
   id: string;
   description: string;
-  status: "DONE" | "OPEN" | "CLOSE";
+  status: Status;
   created_at: Date;
   updated_at: Date | null;
 };
 
 interface ColumnsProps {
   handleDelete: (taskId: string) => Promise<void>;
+  handleUpdateStatus: (taskId: string, status: Status) => Promise<void>;
 }
 
-export const columns = ({ handleDelete }: ColumnsProps): ColumnDef<Task>[] => [
+export const columns = ({
+  handleDelete,
+  handleUpdateStatus,
+}: ColumnsProps): ColumnDef<Task>[] => [
   {
     accessorKey: "description",
     header: "Description",
@@ -34,6 +46,25 @@ export const columns = ({ handleDelete }: ColumnsProps): ColumnDef<Task>[] => [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const task = row.original;
+
+      const handleChangeStatus = (newStatus: Status) => {
+        handleUpdateStatus(task.id, newStatus);
+      };
+      return (
+        <Select defaultValue={task.status} onValueChange={handleChangeStatus}>
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={Status.OPEN}>Open</SelectItem>
+            <SelectItem value={Status.CLOSE}>Close</SelectItem>
+            <SelectItem value={Status.DONE}>Done</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+    },
   },
   {
     accessorKey: "created_at",

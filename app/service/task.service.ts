@@ -1,5 +1,6 @@
 import { FormType } from "@/components/TaskForm";
 import { Task } from "../(auth)/task/columns";
+import { Status } from "../model/taskStatus.model";
 
 export async function getAllTasks(): Promise<Task[]> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/task/`, {
@@ -84,4 +85,23 @@ export async function deleteTask(id: string): Promise<string> {
     throw new Error("Failed to delete task");
   }
   return id;
+}
+
+export async function updateTaskStatus(
+  id: string,
+  status: Status
+): Promise<Task> {
+  const response = await fetch(`/api/task/${id}/status`, {
+    method: "PUT",
+    body: JSON.stringify({ status }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update task status");
+  }
+  const data: Task = await response.json();
+  return data;
 }
