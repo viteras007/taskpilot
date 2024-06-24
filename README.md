@@ -40,13 +40,10 @@
 #### Login
 
 ![Login Web](./screenshots/login-web.png)
-![Login MD](./screenshots/login-md.png)
 
 #### Dashboard
 
 ![Dashboard LG](./screenshots/dashboard-lg.png)
-![Dashboard MD](./screenshots/dashboard-md.png)
-![Dashboard SM](./screenshots/dashboard-sm.png)
 
 #### Tasks
 
