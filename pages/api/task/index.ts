@@ -1,38 +1,48 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Task, Status } from "@prisma/client";
 import prisma from "@/prisma/prismaClient";
+import { getServerSession } from "next-auth";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
-    try {
+  try {
+    const session = await getServerSession(req, res, {});
+    if (!session) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const userEmail = session.user?.email;
+
+    if (req.method === "GET") {
       const tasks: Task[] = await prisma.task.findMany({
+        where: {
+          email: userEmail!,
+        },
         orderBy: {
           created_at: "desc",
         },
       });
-      res.status(200).json(tasks);
-    } catch (error) {
-      res.status(500).json({ error: "Error fetching tasks" });
-    }
-  } else if (req.method === "POST") {
-    const { description, status }: { description: string; status: Status } =
-      req.body;
-    try {
+      return res.status(200).json(tasks);
+    } else if (req.method === "POST") {
+      const { description, status }: { description: string; status: Status } =
+        req.body;
       const task: Task = await prisma.task.create({
         data: {
           description,
           status,
+          email: userEmail!,
         },
       });
-      res.status(201).json(task);
-    } catch (error) {
-      res.status(500).json({ error: "Error creating task" });
+      return res.status(201).json(task);
+    } else {
+      return res
+        .status(405)
+        .json({ error: `Method ${req.method} Not Allowed` });
     }
-  } else {
-    res.setHeader("Allow", ["GET", "POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (error) {
+    console.error("Error in API route:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }

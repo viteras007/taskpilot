@@ -1,48 +1,68 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Task, Status } from "@prisma/client";
+import { Task } from "@prisma/client";
 import prisma from "@/prisma/prismaClient";
+import { getServerSession } from "next-auth";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { id } = req.query;
+  const session = await getServerSession(req, res, {});
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
-  if (req.method === "GET") {
-    try {
-      const task: Task | null = await prisma.task.findUnique({
-        where: { id: String(id) },
-      });
+  const userEmail = session.user?.email;
 
-      if (!task) {
-        res.status(404).json({ error: "Task not found" });
+  try {
+    const task: Task | null = await prisma.task.findUnique({
+      where: { id: String(id) },
+    });
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    if (req.method === "GET") {
+      if (task.email !== userEmail) {
+        return res
+          .status(403)
+          .json({ error: "Unauthorized access to this task" });
       } else {
-        res.status(200).json(task);
+        return res.status(200).json(task);
       }
-    } catch (error) {
-      res.status(500).json({ error: "Error fetching task" });
+    } else if (req.method === "PUT") {
+      const { description, status } = req.body;
+      if (task.email !== userEmail) {
+        return res
+          .status(403)
+          .json({ error: "Unauthorized update of this task" });
+      } else {
+        const updatedTask: Task = await prisma.task.update({
+          where: { id: String(id) },
+          data: { description, status },
+        });
+        return res.status(200).json(updatedTask);
+      }
+    } else if (req.method === "DELETE") {
+      if (task.email !== userEmail) {
+        return res
+          .status(403)
+          .json({ error: "Unauthorized deletion of this task" });
+      } else {
+        await prisma.task.delete({
+          where: { id: String(id) },
+        });
+        return res.status(204).end();
+      }
+    } else {
+      return res
+        .setHeader("Allow", ["GET", "PUT", "DELETE"])
+        .status(405)
+        .end(`Method ${req.method} Not Allowed`);
     }
-  } else if (req.method === "PUT") {
-    const { description, status } = req.body;
-    try {
-      const task: Task = await prisma.task.update({
-        where: { id: String(id) },
-        data: { description, status },
-      });
-      res.status(200).json(task);
-    } catch (error) {
-      res.status(500).json({ error: "Error updating task" });
-    }
-  } else if (req.method === "DELETE") {
-    try {
-      await prisma.task.delete({
-        where: { id: String(id) },
-      });
-      res.status(204).end();
-    } catch (error) {
-      res.status(500).json({ error: "Error deleting task" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }

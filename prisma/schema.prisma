@@ -19,6 +19,7 @@ model Task {
     status      Status   @default(OPEN)
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
+    email       String
 }
 
 enum Status {

@@ -1,12 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Task, Status } from "@prisma/client";
+import { Task } from "@prisma/client";
 import prisma from "@/prisma/prismaClient";
+import { getServerSession } from "next-auth";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { id } = req.query;
+  const session = await getServerSession(req, res, {});
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const userEmail = session.user?.email;
 
   if (req.method === "PUT") {
     const { status } = req.body;
