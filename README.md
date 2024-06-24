@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TaskPilot
 
-## Getting Started
+### 🔧Technologies
 
-First, run the development server:
+- Next.js (v14)
+- Shadcn
+- Docker
+- Postgres Sql
+- Prisma ORM
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🎯MVP Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Authentication (Login with Google)
+- Task Management
+  - List all tasks from this user
+  - Create/Update
+  - Delete
+  - Filtering
+  - Sorting
+- Dashboard
+  - Total tasks created by user
+  - Tasks Done on actual month
+  - Tasks Open on actual month
+  - Tasks Open and Active for Today
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ⏭️Future Version Ideas
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [ ] Basic Calendar
+- [ ] Themes
+- [ ] Additional Features for Task
+  - [ ] Categories/tags
+  - [ ] Comments and attachment
+  - [ ] Due data and priority
+- [ ] Subtasks inside the main task
+- [ ] Notification
+- [ ] Productive Analytics (graph and report about performance)
 
-## Learn More
+### Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+#### Login
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![Login Web](./screenshots/login-web.png)
+![Login MD](./screenshots/login-md.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### Dashboard
 
-## Deploy on Vercel
+![Dashboard LG](./screenshots/dashboard-lg.png)
+![Dashboard MD](./screenshots/dashboard-md.png)
+![Dashboard SM](./screenshots/dashboard-sm.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Tasks
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![List Tasks](./screenshots/tasks-list.png)
+![Create Tasks](./screenshots/task-create.png)
+![Handle Status](./screenshots/handle-status.png)
