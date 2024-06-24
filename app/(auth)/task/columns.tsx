@@ -58,9 +58,24 @@ export const columns = ({
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={Status.OPEN}>Open</SelectItem>
-            <SelectItem value={Status.CLOSE}>Close</SelectItem>
-            <SelectItem value={Status.DONE}>Done</SelectItem>
+            <SelectItem value={Status.OPEN}>
+              <div className="flex items-center">
+                <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
+                Open
+              </div>
+            </SelectItem>
+            <SelectItem value={Status.CLOSE}>
+              <div className="flex items-center">
+                <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                Close
+              </div>
+            </SelectItem>
+            <SelectItem value={Status.DONE}>
+              <div className="flex items-center">
+                <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                Done
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       );

@@ -23,6 +23,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Status } from "@/app/model/taskStatus.model";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +45,16 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
+
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    if (value === "ALL") {
+      table.getColumn("status")?.setFilterValue(undefined);
+    } else {
+      table.getColumn("status")?.setFilterValue(value);
+    }
+  };
 
   const table = useReactTable({
     data,
@@ -56,16 +74,49 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Filter tasks..."
-          value={
-            (table.getColumn("description")?.getFilterValue() as string) ?? ""
-          }
-          onChange={event =>
-            table.getColumn("description")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="flex space-x-4">
+          <Input
+            placeholder="Filter tasks..."
+            value={
+              (table.getColumn("description")?.getFilterValue() as string) ?? ""
+            }
+            onChange={event =>
+              table.getColumn("description")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <Select onValueChange={handleStatusChange} value={statusFilter}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Filter Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-gray-500 mr-2"></span>
+                  All
+                </div>
+              </SelectItem>
+              <SelectItem value={Status.OPEN}>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
+                  Open
+                </div>
+              </SelectItem>
+              <SelectItem value={Status.CLOSE}>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                  Close
+                </div>
+              </SelectItem>
+              <SelectItem value={Status.DONE}>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                  Done
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Link href="/task/new">
           <Button variant="outline">Create New Task</Button>
         </Link>
