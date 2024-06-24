@@ -9,6 +9,17 @@ export async function middleware(request: NextRequest) {
   });
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/") {
+    // Verifica se há token para decidir o redirecionamento
+    if (token) {
+      const dashboardUrl = new URL("/dashboard", request.url);
+      return NextResponse.redirect(dashboardUrl);
+    } else {
+      const loginUrl = new URL("/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   // Redireciona para /login se não estiver autenticado e tentar acessar uma rota protegida
   if (!token && pathname !== "/login") {
     const loginUrl = new URL("/login", request.url);
@@ -27,5 +38,5 @@ export async function middleware(request: NextRequest) {
 
 // Aplicação do middleware apenas às rotas protegidas
 export const config = {
-  matcher: ["/dashboard", "/task", "/settings", "/login"], // adicione outras rotas conforme necessário
+  matcher: ["/", "/dashboard", "/task", "/settings", "/login"], // adicione outras rotas conforme necessário
 };
